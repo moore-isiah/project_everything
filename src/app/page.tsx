@@ -27,6 +27,16 @@ export default function Home() {
       localStorage.setItem("albums", JSON.stringify(albums));
     }
   }, []);
+  useEffect(() => {
+    console.log(albums);
+    const listened = albums.filter((album) => album.has_listened === true);
+    console.log(listened);
+    setHaveListened(listened);
+
+    const notListened = albums.filter((album) => album.has_listened === false);
+    console.log(notListened);
+    setHaveNotListened(notListened);
+  }, [albums]);
 
   const findAlbum = (searchedAlbum: string): album => {
     console.log("searched album");
@@ -56,9 +66,13 @@ export default function Home() {
     }
   };
 
-  const getRandomAlbum = () => {
+  const getRandomAlbum = (): undefined => {
     const randomI = Math.floor(Math.random() * 5392);
     console.log(randomI);
+    if (albums[randomI].has_listened) {
+      console.log("on porpis");
+      getRandomAlbum();
+    }
     setFoundAlbum(albums[randomI]);
   };
 
@@ -88,7 +102,6 @@ export default function Home() {
           className="m-5 border rounded border-blue-400"
           onClick={() => {
             var temp = findAlbum(albumSearch);
-            console.log(temp);
             setFoundAlbum(temp);
           }}
         >
@@ -137,6 +150,9 @@ export default function Home() {
           >
             Have listened
           </h1>
+          <h2>
+            {haveListened.length}/{albums.length}
+          </h2>
           <div>
             {haveListened &&
               haveListened.map((album, i) => {
@@ -170,6 +186,9 @@ export default function Home() {
           >
             Have listened
           </h1>
+          <h2>
+            {haveNotListened.length}/{albums.length}
+          </h2>
           <div>
             {haveNotListened &&
               haveNotListened.map((album, i) => {
